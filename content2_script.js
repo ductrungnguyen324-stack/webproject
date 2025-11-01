@@ -14,7 +14,7 @@
         { stt: 10, name: 'Vợt cầu lông Kumpoo Power Control K520', type: 'Vợt cầu lông Kumpoo', price: 650000, status: 1 },
     ];
 
-    // 2. Dữ liệu Khách hàng
+    // 2. Dữ liệu Khách hàng heheheheheheeeeee
     const userList = [
         { stt: 1, fullName: 'Nguyễn Văn A', contact: '0901xxxxxx', joinDate: '2024-01-15', status: 1 }, 
         { stt: 2, fullName: 'Trần Thị B', contact: '0902xxxxxx', joinDate: '2024-03-20', status: 1 },
@@ -42,7 +42,7 @@
 
     // --- Các Hàm Chung & Tiện ích ---
     function closeModal(id) {
-        document.getElementById(id).style.display = "none";
+        document.getElementById(id).style.display = "no";
     }
 
     function formatCurrency(amount) {
