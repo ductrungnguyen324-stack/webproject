@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CAULONG</title>
+    <link rel="stylesheet" href="content2_style.css">
+    <link rel="stylesheet" href="modal_add_products_style.css">
+    <link rel="stylesheet" href="modal_detail_order_style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <nav class="admin-menu">
+            <button data-section="overview">Tổng quan</button>
+            <button data-section="product">Sản phẩm</button>
+            <button data-section="user">Khách hàng</button>
+            <button data-section="order">Đơn hàng</button>
+            <button data-section="statistical">Thống kê</button>
+        </nav>
+        <main class="content">
+            <!--Tổng quan-->
+            <div class="section active"id="overview">
+                <div class="cards"> 
+                    <div class="card-single">
+                        <div class="box">
+                            <h2 id="amount-user">0</h2>
+                            <div class="in-box">
+                                <h3>Khách hàng</h3>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-single">
+                        <div class="box">
+                            <h2 id="amount-product">0</h2> 
+                            <div class="in-box">
+                                <h3>Sản phẩm</h3>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-single">
+                        <div class="box">
+                            <h2 id="Doanh-thu"></h2>
+                            <div class="in-box">
+                                <h3>Doanh thu</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Sản phẩm-->
+            <div class="section" id="product">
+                <div class="admin-control">
+                    <div class ="admin-control left">
+                        <form action="" class="form-search">
+                            <span class="search"><i class="fa-light fa-magnifying-glass"></i></span>
+                            <input id="form-search-product" type="text" class="form-search-input" placeholder="Tìm kiếm tên vợt..." oninput="showProduct()">
+                        </form>
+                    </div>
+                    <div class="admin-control center">
+                        <select name="the-loai" id="the-loai" onchange="showProduct()">
+                           <option>Tất cả</option>
+                           <option>Vợt cầu lông Yonex</option>
+                           <option>Vợt cầu lông Victor</option>
+                           <option>Vợt cầu lông Lining</option>
+                           <option>Vợt cầu lông Mizuno</option>
+                           <option>Vợt cầu lông Apacs</option>
+                           <option>Vợt cầu lông VNB</option>
+                           <option>Vợt cầu lông Proace</option>
+                           <option>Vợt cầu lông Forza</option>
+                           <option>Vợt cầu lông Kamito</option>
+                           <option>Vợt cầu lông Kumpoo</option>
+                           <option>Đã xóa</option>
+                         </select>
+                    </div>
+                    <div class="admin-control right">
+                        <button class="control" id="reset-product" onclick="resetSearchProduct()">
+                            <i class="fa-light fa-rotate-right"></i>
+                            <span>Làm mới</span>
+                        </button>
+                        <button class="control" id="add-product" onclick="openAddProductModal()">
+                            <i class="fa-light fa-plus"></i>
+                            <span>Thêm vợt mới</span>
+                            
+                        </button>
+                    </div>
+                </div>
+                <div class="table">
+                    <table width="100%">
+                        <thead>
+                            <tr>
+                                <td>STT</td>
+                                <td>Tên sản phẩm</td>
+                                <td>Loại</td>
+                                <td>Giá</td>
+                                <td>Trạng thái</td>
+                                <td>Thao tác</td> </tr>
+                        </thead>
+                        <tbody id="show-product"></tbody>
+                    </table>
+                </div>  
+            </div>
+            <!--Khách hàng-->
+            <div class="section" id="user">
+                <div class="admin-control">
+                    <div class="admin-control left">
+                        <form action="" class="form-search">
+                            <span class="search"><i class="fa-light fa-magnifying-glass"></i></span>
+                            <input id="form-search-user" type="text" class="form-search-input" placeholder="Tìm kiếm khách hàng..." oninput="showUser()">
+                        </form>
+                    </div>
+                    <div class="admin-control center">
+                        <select class="tinh-trang" id="tinh-trang-user" onchange="showUser()">
+                            <option value="2">Tất cả</option>
+                            <option value="1">Hoạt động</option>
+                            <option value="0">Bị khóa</option>
+                        </select>
+                    </div>
+                    <div class="admin-control right">
+                        <form action="" class="fill-date">
+                            <div>
+                                <label for="time-start">Từ</label>
+                                <input type="date" class="form-control-date" id="time-start-user" onchange="showUser()">
+                            </div>
+                            <div>
+                                <label for="time-end">Đến</label>
+                                <input type="date" class="form-control-date" id="time-end-user" onchange="showUser()">
+                            </div>
+                        </form>
+                        <button class="reset-user" id="reset-user" onclick="cancelSearchUser()"><i class="fa-light fa-arrow-rotate-right"></i></button>
+                        <button class="control" id="add-user" onclick="openAddUserModal()">
+                            <i class="fa-light fa-plus"></i>
+                            <span>Thêm khách hàng</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="table">
+                    <table width="100%">
+                        <thead>
+                            <tr>
+                                <td>STT</td>
+                                <td>Họ và tên</td>
+                                <td>Liên hệ</td>
+                                <td>Ngày tham gia</td>
+                                <td>Tình trạng</td>
+                                <td>Thao tác</td> </tr>
+                        </thead>
+                        <tbody id="show-user">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="section" id="order">
+                <div class="admin-control">
+                    <div class="admin-control left">
+                        <form action="" class ="form-search">
+                            <span class="search"><i class="fa-light fa-magnifying-glass"></i></span>
+                            <input id="form-search-order" type="text" class="form-search-input" placeholder="Tìm kiếm mã đơn, khách hàng..." oninput="findOrder()">
+                        </form>
+                    </div>
+                    <div class="admin-control center">
+                        <select name="tinh-trang" id="tinh-trang-order" onchange="findOrder()"> 
+                            <option value="2">Tất cả</option>
+                            <option value="1">Đã xử lý</option>
+                            <option value="0">Chưa xử lý</option>
+                        </select>
+                    </div>
+                    <div class="admin-control right">
+                        <form action="" class="fill-date">
+                            <div>
+                                <label for="time-start">Từ</label>
+                                <input type="date"class="form-control-date" id="time-start" onchange="findOrder()">
+                            </div>
+                            <div>
+                                <label for="time-end">Đến</label>
+                                <input type="date" class="form-control-date" id="time-end" onchange="findOrder()">
+                            </div>
+                        </form>
+                        <button class="reset-order" onclick="cancelSearchOrder()"><i class="fa-light fa-arrow-rotate-right"></i></button>
+                    </div>
+                </div>
+                <div class="table">
+                    <table width="100%">
+                        <thead>
+                            <tr>
+                                <td>Mã đơn</td>
+                                <td>Khách hàng</td><td>Ngày đặt</td>
+                                <td>Tổng tiền</td>
+                                <td>Trạng thái</td>
+                                <td>Thao tác</td> </tr>
+                        </thead>
+                        <tbody id="show-order">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!--Thống kê-->
+            <div class="section" id="statistical">
+                <div class="admin-control">
+                    <div class="admin-control left">
+                        <form action="" class="form-search">
+                            <span class="search"><i class="fa-light fa-magnifying-glass"></i></span>
+                            <input id="form-search-tk" type="text" class="form-search-input" placeholder="Tìm kiếm tên món..." oninput="thongke()">
+                        </form>
+                    </div>
+                    <div class="admin-control center">
+                        <select name="the-loai-tk" id="the-loai-tk" onchange="thongke()">
+                            <option>Tất cả</option>
+                            <option>Vợt cầu lông Yonex</option>
+                            <option>Vợt cầu lông Victor</option>
+                            <option>Vợt cầu lông Lining</option>
+                            <option>Vợt cầu lông Mizuno</option>
+                            <option>Vợt cầu lông Apacs</option>
+                            <option>Vợt cầu lông VNB</option>
+                            <option>Vợt cầu lông Proace</option>
+                            <option>Vợt cầu lông Forza</option>
+                            <option>Vợt cầu lông Kamito</option>
+                            <option>Vợt cầu lông Kumpoo</option>
+                        </select>
+                    </div>
+                    <div class="admin-control right">
+                        <form action="" class="fill-date">
+                            <div>
+                                <label for="time-start">Từ</label>
+                                <input id="time-start-tk" class="form-control-date" type="date" onchange="thongke()">
+                            </div>
+                            <div>
+                                <label for="time-end">Đến</label>
+                                <input id="time-end-tk" class="form-control-date" type="date" onchange="thongke()">
+                            </div>
+                        </form>
+                        <button class="reset-order" onclick="cancelSearchThongKe()"><i class="fa-light fa-arrow-rotate-right"></i></button>
+                    </div>
+                </div>
+                <div class="order-statistical" id="order-statistical">
+                    <div class="order-statistical-card">
+                        <div class="order-statistical-card-content">
+                            <p class="order-statistical-card-content-d">Sản phẩm được bán ra</p>
+                            <h4 class="order-statistical-card-content-h" id="quantity-product"></h4>
+                        </div>
+                        <div class="order-statistical-card-icon">
+                            <i class="fa-light fa-food"></i>
+                        </div>
+                    </div>
+                    <div class="order-statistical-card">
+                        <div class="order-statistical-card-content">
+                            <p class="order-statistical-card-content-d">Số lượng bán ra</p>
+                            <h4 class="order-statistical-card-content-h" id="quantity-order"></h4>
+                        </div>
+                        <div class="order-statistical-card-icon">
+                            <i class="fa-light fa-file"></i>
+                        </div>
+                    </div>
+                    <div class="order-statistical-card">
+                        <div class="order-statistical-card-content">
+                            <p class="order-statistical-card-content-d">Doanh thu</p>
+                            <h4 class="order-statistical-card-content-h" id="quantity-revenue"></h4>
+                        </div>
+                        <div class="order-statistical-card-icon">
+                            <i class="fa-light fa-money"></i>
+                        </div> 
+                    </div>
+                </div>
+                <div class="table">
+                    <table width="100%">
+                        <thead>
+                            <tr>
+                                <td>STT</td>
+                                <td>Tên vợt</td>
+                                <td>Số lượng bán</td>
+                                <td>Doanh thu</td>
+                            </tr>
+                        </thead>
+                        <tbody id="show-tk">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    <div id = "Modal" class = "modal add-product">
+        <div class = "modal_content">
+            <span class = "close_button" onclick="closeModal('Modal')">&times;</span>
+            <h3 id = "ModalTitle">Thêm Sản Phẩm</h3>
+            
+            <form id = "ProductForm">
+                <input type = "hidden" id = "ProductID" name = "id" value = "">
+
+                <div class = "form_group">
+                    <label for = "ProductName">Tên sản phẩm:</label>
+                    <input type = "text" id = "ProductName" name = "name" required>
+                </div>
+
+                <div class = "form_group">
+                    <label for = "ProductType">Loại:</label>
+                    <input type = "text" id = "ProductType" name = "type" required>
+                </div>
+
+                <div class = "form_group">
+                    <label for = "ProductPrice">Giá bán:</label>
+                    <input type = "number" id = "ProductPrice" name = "price" required min = "0">
+                </div>
+
+                <button type = "submit" id = "ButtonSubmitForm" class = "button_submit">Thêm</button>
+            </form>
+        </div>
+    </div>
+
+    <div id = "DeleteModal" class = "modal delete-product">
+        <div class = "modal_content">
+            <span class = "close_button" onclick="closeModal('DeleteModal')">&times;</span>
+            <h3 id = "ModalTitle">Xác nhận XÓA ?</h3>
+
+            <p style="text-align: center; margin-top: 10px;"><strong id="ProductNameToDelete">TÊN SẢN PHẨM</strong></p>
+            
+            <div class="modal-choice" style="text-align: center; margin-top: 30px;">
+                <button type="button" id="ConfirmDeleteButton" class="delete-button">Xóa</button>
+                <button type="button" class="cancel-button" onclick="closeModal('DeleteModal')">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="AddUserModal" class="modal add-user">
+        <div class="modal_content">
+            <span class="close_button" onclick="closeModal('AddUserModal')">&times;</span>
+            <h3 id="AddUserModalTitle">Thêm Khách Hàng Mới</h3>
+            
+            <form id="AddUserForm">
+                <input type="hidden" id="UserID" name="id" value="">
+
+                <div class="form_group">
+                    <label for="UserName">Tên khách hàng:</label>
+                    <input type="text" id="UserName" name="name" required>
+                </div>
+
+                <div class="form_group">
+                    <label for="UserPhone">Số điện thoại:</label>
+                    <input type="text" id="UserPhone" name="phone" required>
+                </div>
+                
+                <button type="submit" id="ButtonSubmitUserForm" class="button_submit">Thêm</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="StatusModal" class="modal modal-confirm">
+        <div class="modal_content">
+            <span class="close_button" onclick="closeModal('StatusModal')">&times;</span>
+            
+            <h3 id="StatusModalTitle">Xác nhận thao tác?</h3>
+            
+            <p style="text-align: center; margin: 20px 0;">
+                Bạn có chắc chắn muốn <span id="StatusActionText" style="font-weight: bold;">[HÀNH ĐỘNG]</span> tài khoản của khách hàng <br>
+                <strong id="UserToChangeStatus" style="color: var(--dark-gray);">[TÊN KHÁCH HÀNG]</strong>?
+            </p>
+            
+            <div class="modal-choice" style="text-align: center; margin-top: 30px;">
+                <button type="button" id="ConfirmStatusButton" class="confirm-button">Xác Nhận</button>
+                
+                <button type="button" class="cancel-button" onclick="closeModal('StatusModal')">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <div id = "DetailOrder" class = "modal detail-order">
+        <div class = "modal_content">
+            <div class = "modal_header">
+                <h2 id = "DetailModalTitle">Chi Tiết Đơn Hàng #00000</h2>
+                <span class = "close_button" onclick = "closeModal('DetailOrder')">&times;</span>
+            </div>
+            
+            <div class="modal_body">
+                <div class = "Order_Info">
+                    <div class = "Order_Info_Left">
+                        <h4>THÔNG TIN ĐƠN HÀNG</h4>
+                        <p><strong>Ngày đặt:</strong> <span id = "infoOrderDate"></span></p>
+                        <p><strong>Trạng thái:</strong> <span id = "infoStatus"></span></p>
+                    </div>
+                    <div class = "Order_Info_Right">
+                        <h4>NGƯỜI NHẬN</h4>
+                        <p><strong>Họ tên:</strong> <span id = "infoCustomerName"></span></p>
+                        <p><strong>Số điện thoại:</strong> <span id = "infoSDT"></span></p>
+                        <p><strong>Địa chỉ giao hàng:</strong> <span id = "infoAddress"></span></p>
+                    </div>
+                </div>
+
+                <h4>DANH SÁCH SẢN PHẨM</h4>
+                <table class = "detail_table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Tên Sản Phẩm</th>
+                            <th>Giá</th>
+                            <th>Số Lượng</th>
+                            <th>Thành Tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody id = "ProductsTableBody"></tbody>
+                </table>
+                
+                <div class = "Order_Summary">
+                    <p class = "total-line"><strong>Tổng Thanh Toán:</strong> <span id = "summaryTotal"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="ConfirmOrderStatusModal" class="modal modal-confirm">
+        <div class="modal_content">
+            <span class="close_button" onclick="closeModal('ConfirmOrderStatusModal')">&times;</span>
+            
+            <h3 id="ConfirmStatusModalTitle">Xác nhận thao tác?</h3>
+            
+            <p style="text-align: center; margin: 20px 0;">
+                Bạn có chắc chắn muốn <span id="StatusActionOrderText" style="font-weight: bold;">[HÀNH ĐỘNG]</span> đơn hàng <br>
+                <strong id="OrderToChangeStatus" style="color: var(--dark-gray);">#DH000</strong> của khách hàng <strong id="CustomerToChangeStatus">Tên Khách Hàng</strong>?
+            </p>
+            
+            <div class="modal-choice" style="text-align: center; margin-top: 30px;">
+                <button type="button" id="ConfirmActionButton" class="confirm-button">Xác Nhận</button>
+                
+                <button type="button" class="cancel-button" onclick="closeModal('ConfirmOrderStatusModal')">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+    <script src="content2_script.js"></script>
+</body>
+</html>
