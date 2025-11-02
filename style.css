@@ -548,7 +548,7 @@ h3
 
 /* Modal Chi tiết Đơn hàng */
 .modal#DetailOrder .modal_content {
-    max-width: 800px; 
+    max-width: 950px; 
     width: 90%; 
 }
 .modal_header {
@@ -567,9 +567,22 @@ h3
     flex-wrap: wrap;
     margin-bottom: 30px;
     padding: 0 20px;
-    gap: 20px;
+    gap: 30px;  
 }
-
+.Order_Info h4{
+    color: #444;
+    font-size: 15px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    font-weight: 700
+}
+.Order_Info p {
+    line-height: 2;
+    font-size: 15px;
+}
+.Order_Info strong{
+    color: #333;
+}
 .Order_Info > div {
     flex: 1 1 45%;
 }
@@ -578,18 +591,29 @@ h3
     width: 100%;
     border-collapse: collapse;
     margin-top: 15px;
+    table-layout: fixed;    
 }
 .detail_table th, .detail_table td {
     padding: 10px 8px;
-    text-align: left;
     border-bottom: 1px solid #ddd;
+    word-wrap: break-word;
 }
 .detail_table th {
     background-color: #f4f4f4;
     font-weight: bold;
 }
+.detail_table thead tr th:nth-child(1) { width: 10%; text-align: center; }
+.detail_table tbody tr td:nth-child(1) { text-align: center; }
+.detail_table thead tr th:nth-child(2) { width: 40%; text-align: left; }
+.detail_table tbody tr td:nth-child(2) { text-align: left; }
+.detail_table thead tr th:nth-child(3) { width: 20%; text-align: center; }
+.detail_table tbody tr td:nth-child(3) { text-align: center; }
+.detail_table thead tr th:nth-child(4) { width: 10%; text-align: center; }
+.detail_table tbody tr td:nth-child(4) { text-align: center; }
+.detail_table thead tr th:nth-child(5) { width: 20%; text-align: right; }
+.detail_table tbody tr td:nth-child(5) { text-align: right; }
 .Order_Summary {
-    max-width: 300px;
+    max-width: 350px;
     margin-top: 20px;
     text-align: right;
     margin-left: auto;
@@ -597,7 +621,7 @@ h3
 
 .total-line {
     font-size: 1.2em;
-    font-weight: bold;
-    padding-top: 10px;
+    font-weight: 700;
+    padding-top: 15px;
     border-top: 2px dashed #ccc;
 }
