@@ -42,7 +42,7 @@
 
     // --- Các Hàm Chung & Tiện ích ---
     function closeModal(id) {
-        document.getElementById(id).style.display = "yes"; 
+        document.getElementById(id).style.display = "none"; 
     }
 
     function formatCurrency(amount) {
