@@ -309,7 +309,18 @@
 
                 <div class = "form_group">
                     <label for = "ProductType">Loại:</label>
-                    <input type = "text" id = "ProductType" name = "type" required>
+                    <select id = "ProductType" name = "type" required>
+                        <option>Vợt cầu lông Yonex</option>
+                        <option>Vợt cầu lông Victor</option>
+                        <option>Vợt cầu lông Lining</option>
+                        <option>Vợt cầu lông Mizuno</option>
+                        <option>Vợt cầu lông Apacs</option>
+                        <option>Vợt cầu lông VNB</option>
+                        <option>Vợt cầu lông Proace</option>
+                        <option>Vợt cầu lông Forza</option>
+                        <option>Vợt cầu lông Kamito</option>
+                        <option>Vợt cầu lông Kumpoo</option>
+                    </select>
                 </div>
 
                 <div class = "form_group">
@@ -329,7 +340,7 @@
 
             <p style="text-align: center; margin-top: 10px;"><strong id="ProductNameToDelete">TÊN SẢN PHẨM</strong></p>
             
-            <div class="modal-choice" style="text-align: center; margin-top: 30px;">
+            <div class="modal-choice" style="margin-top: 30px; display: flex; justify-content: center;">
                 <button type="button" id="ConfirmDeleteButton" class="delete-button">Xóa</button>
                 <button type="button" class="cancel-button" onclick="closeModal('DeleteModal')">Hủy</button>
             </div>
@@ -370,7 +381,7 @@
                 <strong id="UserToChangeStatus" style="color: var(--dark-gray);">[TÊN KHÁCH HÀNG]</strong>?
             </p>
             
-            <div class="modal-choice" style="text-align: center; margin-top: 30px;">
+            <div class="modal-choice" style="margin-top: 30px; display: flex; justify-content: center">
                 <button type="button" id="ConfirmStatusButton" class="confirm-button">Xác Nhận</button>
                 
                 <button type="button" class="cancel-button" onclick="closeModal('StatusModal')">Hủy</button>
@@ -432,7 +443,7 @@
                 <strong id="OrderToChangeStatus" style="color: var(--dark-gray);">#DH000</strong> của khách hàng <strong id="CustomerToChangeStatus">Tên Khách Hàng</strong>?
             </p>
             
-            <div class="modal-choice" style="text-align: center; margin-top: 30px;">
+            <div class="modal-choice" style="margin-top: 30px; display: flex; justify-content: center;">
                 <button type="button" id="ConfirmActionButton" class="confirm-button">Xác Nhận</button>
                 
                 <button type="button" class="cancel-button" onclick="closeModal('ConfirmOrderStatusModal')">Hủy</button>

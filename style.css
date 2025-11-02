@@ -477,7 +477,7 @@ h3
     margin-bottom: 5px;
     color: black;
 }
-.form_group input[type = "text"], .form_group input[type = "number"], .form_group textarea
+.form_group input[type = "text"], .form_group input[type = "number"]
 {
     width: 100%;
     padding: 10px;
@@ -486,9 +486,11 @@ h3
     box-sizing: border-box;
 }
 
-textarea
+.form_group select
 {
-    resize: none;
+    width: 100%;
+    padding: 10px;
+    margin-left: 0;
 }
 
 .button_submit
