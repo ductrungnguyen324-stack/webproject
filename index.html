@@ -20,6 +20,8 @@
       <a href="#" class="menu-item" data-section="user"><i class="fa fa-users"></i> Khách hàng</a>
       <a href="#" class="menu-item" data-section="order"><i class="fa fa-shopping-cart"></i> Đơn hàng</a>
       <a href="#" class="menu-item" data-section="statistical"><i class="fa fa-chart-bar"></i> Thống kê</a>
+      <a href="#" class="menu-item" data-section="price-mgt"><i class="fa-solid fa-tags"></i> Quản lý Giá</a> 
+      <a href="#" class="menu-item" data-section="import-mgt"><i class="fa-solid fa-boxes-packing"></i> Nhập hàng</a>
     </div>
 
     <div class="bottom-sidebar">
@@ -293,6 +295,78 @@
                     </table>
                 </div>
             </div>
+            <!--Giá Bán & Lợi Nhuận-->
+            <div class="section" id="price-mgt">
+                <h2>Quản lý Giá Bán & Lợi Nhuận</h2>
+                <div class="admin-control" style="margin-top: 20px;">
+                    <div class="admin-control left">
+                        <h3>Tỷ lệ Lợi nhuận Mặc định: 15%</h3>
+                    </div>
+                    <div class="admin-control right">
+                        <button class="control" id="save-profit-rate">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Lưu Tỷ lệ</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="table">
+                    <table width="100%">
+                        <thead>
+                            <tr>
+                                <td>STT</td>
+                                <td>Sản phẩm</td>
+                                <td>Giá vốn (TB)</td>
+                                <td>Giá bán hiện tại</td>
+                                <td>Tỷ lệ Lợi nhuận (%)</td>
+                                <td>Thao tác</td>
+                            </tr>
+                        </thead>
+                        <tbody id="show-profit-rate">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!--Nhập hàng-->
+            <div class="section" id="import-mgt">
+                <h2>Quản lý Phiếu Nhập Hàng</h2>
+                <div class="admin-control">
+                    <div class="admin-control left">
+                        <form action="" class="form-search">
+                            <span class="search"><i class="fa-solid fa-magnifying-glass"></i></span>
+                            <input id="form-search-import" type="text" class="form-search-input" placeholder="Tìm kiếm mã phiếu..." oninput="showImportList()">
+                        </form>
+                    </div>
+                    <div class="admin-control center">
+                        <select name="tinh-trang-import" id="tinh-trang-import" onchange="showImportList()">
+                            <option value="2">Tất cả</option>
+                            <option value="1">Hoàn thành</option>
+                            <option value="0">Nháp</option>
+                        </select>
+                    </div>
+                    <div class="admin-control right">
+                        <button class="control" onclick="openAddImportModal()">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Thêm Phiếu Nhập</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="table">
+                    <table width="100%">
+                        <thead>
+                            <tr>
+                                <td>Mã Phiếu</td>
+                                <td>Ngày Nhập</td>
+                                <td>Tổng Tiền</td>
+                                <td>Trạng thái</td>
+                                <td>Thao tác</td>
+                            </tr>
+                        </thead>
+                        <tbody id="show-import-list">
+
+                        </tbody>
+                    </table>    
+                </div>
+            </div>
         </main>
     <div id = "Modal" class = "modal add-product">
         <div class = "modal_content">
@@ -450,24 +524,50 @@
             </div>
         </div>
     </div>
+    <div id="ImportModal" class="modal add-import">
+        <div class="modal_content" style="max-width: 700px;">
+            <span class="close_button" onclick="closeModal('ImportModal')">&times;</span>
+            <h3 id="ImportModalTitle">Thêm Phiếu Nhập Mới</h3>
+            
+            <form id="ImportForm">
+                <input type="hidden" id="ImportID" name="id" value="">
+                <div class="form_group">
+                    <label for="ImportDate">Ngày Nhập:</label>
+                    <input type="date" id="ImportDate" name="date" required value="${new Date().toISOString().slice(0, 10)}">
+                </div>
 
+                <h4 style="margin-top: 20px; border-bottom: 1px solid #ccc; padding-bottom: 5px;">Chi tiết sản phẩm</h4>
+                <div id="ImportItemsContainer" style="max-height: 300px; overflow-y: auto;">
+                    </div>
+                
+                <button type="button" class="btn-action" onclick="addImportItemRow()" style="width: auto; margin-top: 10px;">
+                    <i class="fa-solid fa-circle-plus"></i> Thêm Sản phẩm
+                </button>
+
+                <p style="font-weight: bold; margin-top: 15px; text-align: right;">Tổng Tiền: <span id="ImportTotalDisplay">0 đ</span></p>
+
+                <button type="submit" id="ButtonSubmitImportForm" class="button_submit" style="background-color: var(--red);">Lưu Nháp</button>
+                <button type="button" id="ButtonCompleteImport" class="button_submit" style="background-color: #28a745; margin-top: 10px;">Hoàn Thành & Nhập Kho</button>
+            </form>
+        </div>
+    </div>
 </body>
     <script>
             // --- Dữ liệu Mẫu (Mock Data) ---
 
     // 1. Dữ liệu Sản phẩm
     const productList = [
-        { stt: 1, name: 'Vợt cầu lông Yonex Astrox 100 ZZ', type: 'Vợt cầu lông Yonex', price: 4500000, status: 1 },
-        { stt: 2, name: 'Vợt cầu lông Victor Thruster K BXR', type: 'Vợt cầu lông Victor', price: 3200000, status: 1 },
-        { stt: 3, name: 'Vợt cầu lông Lining Windstorm 700', type: 'Vợt cầu lông Lining', price: 1850000, status: 1 },
-        { stt: 4, name: 'Vợt cầu lông Mizuno Caliber VS Tour', type: 'Vợt cầu lông Mizuno', price: 2900000, status: 1 },
-        { stt: 5, name: 'Vợt cầu lông Apacs Finapi 232', type: 'Vợt cầu lông Apacs', price: 850000, status: 1 },
-        { stt: 6, name: 'Vợt cầu lông VNB V99', type: 'Vợt cầu lông VNB', price: 990000, status: 1 },
-        { stt: 7, name: 'Vợt cầu lông Proace Sweet Spot 1000', type: 'Vợt cầu lông Proace', price: 1200000, status: 1 },
-        { stt: 8, name: 'Vợt cầu lông Forza Ti-500', type: 'Vợt cầu lông Forza', price: 1500000, status: 0 }, // Đã xóa
-        { stt: 9, name: 'Vợt cầu lông Kamito Aero Power', type: 'Vợt cầu lông Kamito', price: 1100000, status: 1 },
-        { stt: 10, name: 'Vợt cầu lông Kumpoo Power Control K520', type: 'Vợt cầu lông Kumpoo', price: 650000, status: 1 },
-    ];
+    { stt: 1, name: 'Vợt cầu lông Yonex Astrox 100 ZZ', type: 'Vợt cầu lông Yonex', price: 4500000, importPrice: 3500000, stock: 15, status: 1 },
+    { stt: 2, name: 'Vợt cầu lông Victor Thruster K BXR', type: 'Vợt cầu lông Victor', price: 3200000, importPrice: 2500000, stock: 8, status: 1 },
+    { stt: 3, name: 'Vợt cầu lông Lining Windstorm 700', type: 'Vợt cầu lông Lining', price: 1850000, importPrice: 1400000, stock: 22, status: 1 },
+    { stt: 4, name: 'Vợt cầu lông Mizuno Caliber VS Tour', type: 'Vợt cầu lông Mizuno', price: 2900000, importPrice: 2100000, stock: 5, status: 1 },
+    { stt: 5, name: 'Vợt cầu lông Apacs Finapi 232', type: 'Vợt cầu lông Apacs', price: 850000, importPrice: 700000, stock: 0, status: 1 },
+    { stt: 6, name: 'Vợt cầu lông VNB V99', type: 'Vợt cầu lông VNB', price: 990000, importPrice: 750000, stock: 30, status: 1 },
+    { stt: 7, name: 'Vợt cầu lông Proace Sweet Spot 1000', type: 'Vợt cầu lông Proace', price: 1200000, importPrice: 900000, stock: 12, status: 1 },
+    { stt: 8, name: 'Vợt cầu lông Forza Ti-500', type: 'Vợt cầu lông Forza', price: 1500000, importPrice: 1100000, stock: 0, status: 0 }, 
+    { stt: 9, name: 'Vợt cầu lông Kamito Aero Power', type: 'Vợt cầu lông Kamito', price: 1100000, importPrice: 800000, stock: 18, status: 1 },
+    { stt: 10, name: 'Vợt cầu lông Kumpoo Power Control K520', type: 'Vợt cầu lông Kumpoo', price: 650000, importPrice: 500000, stock: 7, status: 1 },
+];
 
     // 2. Dữ liệu Khách hàng
     const userList = [
@@ -493,6 +593,28 @@
         { orderId: 'DH002', productName: 'Vợt cầu lông Victor Thruster K BXR', quantity: 2, price: 3200000 },
         { orderId: 'DH004', productName: 'Vợt cầu lông Mizuno Caliber VS Tour', quantity: 1, price: 2900000 },
         { orderId: 'DH004', productName: 'Vợt cầu lông Yonex Astrox 100 ZZ', quantity: 1, price: 4500000 }, // Tổng DH004: 7,400,000
+    ];
+
+    // 5. Dữ liệu Tỷ lệ Lợi nhuận theo loại sản phẩm
+    const profitRateList = [
+        { type: 'Vợt cầu lông Yonex', rate: 0.25 },
+        { type: 'Vợt cầu lông Victor', rate: 0.28 },
+        { type: 'Vợt cầu lông Lining', rate: 0.20 },
+        { type: 'Vợt cầu lông Mizuno', rate: 0.22 },
+    ];
+
+    // 6. Dữ liệu Phiếu nhập hàng (Import List)
+    const importList = [
+        { id: 'PN001', date: '2024-05-01', totalAmount: 15000000, status: 1, items: [
+            { productId: 1, name: 'Yonex Astrox 100 ZZ', importPrice: 3500000, quantity: 3 },
+            { productId: 7, name: 'Proace Sweet Spot 1000', importPrice: 900000, quantity: 5 }
+        ]},
+        { id: 'PN002', date: '2024-05-15', totalAmount: 8400000, status: 1, items: [
+            { productId: 3, name: 'Lining Windstorm 700', importPrice: 1400000, quantity: 6 }
+        ]},
+        { id: 'PN003', date: '2024-06-01', totalAmount: 5000000, status: 0, items: [ 
+         { productId: 10, name: 'Kumpoo Power Control K520', importPrice: 500000, quantity: 10 }
+        ]}
     ];
 
     // --- Các Hàm Chung & Tiện ích ---
@@ -930,6 +1052,7 @@ function viewUserDetail(id) {
         // Cập nhật thẻ Tổng quan (được gọi lại để đảm bảo trạng thái mới nhất)
         const totalRevenue = calculateTotalRevenue(orderList);
         updateOverviewCards(productList.length, userList.length, totalRevenue);
+        
     }
 
     function cancelSearchOrder() {
@@ -939,6 +1062,42 @@ function viewUserDetail(id) {
         document.getElementById('time-end').value = '';
         findOrder();
     }
+
+    // 1. Chức năng XỬ LÝ/HỦY ĐƠN HÀNG (Toggle Status)
+function showConfirmStatusModal(id, currentStatus) {
+    const order = orderList.find(o => o.id === id);
+    if (!order) {
+        alert("Không tìm thấy đơn hàng này.");
+        return;
+    }
+    // ... (Giữ nguyên logic cập nhật nội dung modal) ...
+
+    const modal = document.getElementById('ConfirmOrderStatusModal');
+    const confirmButton = document.getElementById('ConfirmActionButton');
+
+    // Gán hàm toggleOrderStatus với ID và trạng thái hiện tại
+    confirmButton.onclick = function() {
+        toggleOrderStatus(id, currentStatus); // SỬ DỤNG ID VÀ STATUS TRỰC TIẾP
+    };
+    
+    modal.style.display = 'block';
+}
+
+function toggleOrderStatus(id, currentStatus) {
+    // 1. Đóng modal xác nhận
+    closeModal('ConfirmOrderStatusModal');
+
+    // 2. Tìm và cập nhật trạng thái đơn hàng
+    const orderIndex = orderList.findIndex(o => o.id === id);
+    if (orderIndex !== -1) {
+        // Chuyển đổi trạng thái (0 -> 1 hoặc 1 -> 0)
+        orderList[orderIndex].status = 1 - currentStatus;
+
+        // 3. Làm mới giao diện
+        findOrder(); 
+        thongke(); // Cần cập nhật lại thống kê
+    }
+}
 
 // Chức năng XEM CHI TIẾT ĐƠN HÀNG
 function viewOrderDetail(id) { 
@@ -1042,24 +1201,20 @@ function showConfirmStatusModal(id, currentStatus) {
     modal.style.display = 'block';
 }
 
+// --- SỬA LỖI LOGIC ĐƠN HÀNG (Order) ---
 function toggleOrderStatus(id, currentStatus) {
     // 1. Đóng modal xác nhận
     closeModal('ConfirmOrderStatusModal');
 
-    // 2. Kiểm tra ID đơn hàng tạm thời
-    if (!currentOrderIdForStatus) return;
-
-    // 3. Tìm và cập nhật trạng thái đơn hàng
-    const orderIndex = orderList.findIndex(o => o.id === currentOrderIdForStatus);
+    // 2. Tìm và cập nhật trạng thái đơn hàng
+    const orderIndex = orderList.findIndex(o => o.id === id); // SỬ DỤNG ID ĐƯỢC TRUYỀN VÀO
     if (orderIndex !== -1) {
-        // Chuyển đổi trạng thái (0 -> 1 hoặc 1 -> 0)
-        orderList[orderIndex].status = 1 - orderList[orderIndex].status;
+        // Chuyển đổi trạng thái: 1 - currentStatus (Ví dụ: 1-0=1, 1-1=0)
+        orderList[orderIndex].status = 1 - currentStatus;
 
-        // 4. Reset ID tạm thời và làm mới giao diện
-        currentOrderIdForStatus = null;
-        
-        // Giả sử hàm findOrder() làm mới bảng đơn hàng
+        // 3. Làm mới giao diện
         findOrder(); 
+        thongke(); // Cần cập nhật lại thống kê
     }
 }
 
@@ -1145,6 +1300,495 @@ function toggleOrderStatus(id, currentStatus) {
         thongke();
     }
 
+    // --- LOGIC QUẢN LÝ GIÁ BÁN & LỢI NHUẬN (PRICE-MGT) ---
+
+// Hàm tìm tỷ lệ lợi nhuận theo loại sản phẩm
+function getProfitRateByType(productType) {
+    const rateObj = profitRateList.find(r => r.type === productType);
+    return rateObj ? rateObj.rate : 0.15; // 15% là mặc định
+}
+
+// Hàm tính Giá bán theo Tỷ lệ lợi nhuận
+function calculateSellingPrice(importPrice, rate) {
+    if (importPrice <= 0 || rate >= 1) return importPrice;
+    // Giá bán = Giá vốn / (1 - %Lợi nhuận)
+    return Math.round(importPrice / (1 - rate));
+}
+
+// Hiển thị bảng Quản lý giá
+function showPriceManagement() {
+    const tableBody = document.getElementById('show-profit-rate');
+    const defaultRate = 0.15; 
+    let html = '';
+
+    productList.filter(p => p.status === 1).forEach((product, index) => {
+        const profitRateObj = profitRateList.find(r => r.type === product.type);
+        const currentRate = profitRateObj ? profitRateObj.rate : defaultRate;
+        
+        // Tính % lợi nhuận thực tế so với giá bán hiện tại (để hiển thị)
+        const profitPercentage = ((product.price - product.importPrice) / product.price) * 100;
+        
+        html += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${product.type} - ${product.name}</td>
+                <td>${formatCurrency(product.importPrice)}</td>
+                <td>${formatCurrency(product.price)}</td>
+                <td>
+                    <input type="number" 
+                           class="profit-input" 
+                           data-stt="${product.stt}"
+                           value="${profitPercentage.toFixed(2)}" 
+                           step="0.01" min="0" max="99"> %
+                </td>
+                <td>
+                    <button class="btn-action update-price-btn" 
+                            data-stt="${product.stt}" 
+                            onclick="updateProductPrice(${product.stt})">Áp dụng</button>
+                </td>
+            </tr>
+        `;
+    });
+
+    tableBody.innerHTML = html;
+}
+
+// Hàm Áp dụng giá mới (Sau khi Admin chỉnh % lợi nhuận và nhấn nút Áp dụng)
+function updateProductPrice(stt) {
+    const row = document.querySelector(`.update-price-btn[data-stt="${stt}"]`).closest('tr');
+    const inputElement = row.querySelector('.profit-input');
+    const newProfitPercentage = parseFloat(inputElement.value) / 100;
+
+    if (isNaN(newProfitPercentage) || newProfitPercentage < 0 || newProfitPercentage >= 1) {
+        alert("Tỷ lệ lợi nhuận không hợp lệ (Phải từ 0% đến 99%).");
+        return;
+    }
+
+    const productIndex = productList.findIndex(p => p.stt === stt);
+    const product = productList[productIndex];
+
+    if (product) {
+        const newSellingPrice = calculateSellingPrice(product.importPrice, newProfitPercentage);
+        
+        // Cập nhật giá bán mới vào productList
+        productList[productIndex].price = newSellingPrice;
+
+        // Cập nhật lại giao diện
+        showPriceManagement(); 
+        showProduct();
+        alert(`Đã cập nhật giá bán mới cho ${product.name} thành ${formatCurrency(newSellingPrice)}.`);
+    }
+}
+
+
+// --- LOGIC QUẢN LÝ NHẬP HÀNG (IMPORT-MGT) ---
+
+// Hàm tạo HTML cho danh sách sản phẩm (dropdown)
+function getProductOptions(selectedStt = null) {
+    let options = '<option value="">-- Chọn sản phẩm --</option>';
+    productList.filter(p => p.status === 1).forEach(p => {
+        const isSelected = p.stt === selectedStt ? 'selected' : '';
+        options += `<option value="${p.stt}" ${isSelected}>${p.name} (${p.type})</option>`;
+    });
+    return options;
+}
+
+// Hàm tạo một dòng sản phẩm mới trong form nhập hàng
+function createImportItemRow(item = null) {
+    const stt = item ? item.productId : Date.now(); // Sử dụng timestamp làm ID tạm thời cho row mới
+    const productName = item ? productList.find(p => p.stt === item.productId)?.name : '';
+    const initialPrice = item ? item.importPrice : 0;
+    const initialQuantity = item ? item.quantity : 1;
+    const isEditing = item !== null;
+    
+    // Gán dữ liệu sản phẩm gốc để hiển thị/tính toán
+    const productOptions = getProductOptions(item ? item.productId : null);
+
+    return `
+        <div class="import-item-row" data-row-id="${stt}">
+            <div class="form_group" style="display: flex; gap: 10px; align-items: flex-end; border-bottom: 1px dashed #eee; padding-bottom: 10px;">
+                
+                <div style="flex-grow: 3;">
+                    <label>Sản phẩm:</label>
+                    <select class="import-product-select" 
+                            data-stt="${stt}"
+                            onchange="updateImportItem(${stt}, this.value, 'select')">${productOptions}</select>
+                </div>
+
+                <div style="flex-grow: 1;">
+                    <label>Giá nhập:</label>
+                    <input type="number" 
+                           class="import-price-input" 
+                           data-stt="${stt}" 
+                           value="${initialPrice}" min="0" required
+                           oninput="updateImportItem(${stt}, this.value, 'price')">
+                </div>
+
+                <div style="flex-grow: 1;">
+                    <label>Số lượng:</label>
+                    <input type="number" 
+                           class="import-quantity-input" 
+                           data-stt="${stt}" 
+                           value="${initialQuantity}" min="1" required
+                           oninput="updateImportItem(${stt}, this.value, 'quantity')">
+                </div>
+
+                <div style="flex-grow: 0;">
+                    <button type="button" class="btn-delete" onclick="removeImportItemRow(${stt})" title="Xóa sản phẩm">
+                        <i class="fa-solid fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Hàm thêm dòng sản phẩm vào Modal
+function addImportItemRow(item = null) {
+    const container = document.getElementById('ImportItemsContainer');
+    if (container) {
+        container.insertAdjacentHTML('beforeend', createImportItemRow(item));
+        calculateImportTotal();
+    }
+}
+
+// Hàm xóa dòng sản phẩm khỏi Modal
+function removeImportItemRow(rowId) {
+    const row = document.querySelector(`.import-item-row[data-row-id="${rowId}"]`);
+    if (row) {
+        row.remove();
+        calculateImportTotal();
+    }
+}
+
+// Hàm tính tổng tiền cho phiếu nhập (tạm thời)
+function calculateImportTotal() {
+    let total = 0;
+    const itemRows = document.querySelectorAll('.import-item-row');
+    
+    itemRows.forEach(row => {
+        const price = parseInt(row.querySelector('.import-price-input').value) || 0;
+        const quantity = parseInt(row.querySelector('.import-quantity-input').value) || 0;
+        total += price * quantity;
+    });
+    
+    document.getElementById('ImportTotalDisplay').textContent = formatCurrency(total);
+}
+
+// Hàm cập nhật dữ liệu khi thay đổi (select/price/quantity)
+function updateImportItem(stt, value, type) {
+    // Nếu thay đổi sản phẩm, cập nhật giá nhập mặc định
+    if (type === 'select') {
+        const productId = parseInt(value);
+        const product = productList.find(p => p.stt === productId);
+        
+        if (product) {
+            const priceInput = document.querySelector(`.import-item-row[data-row-id="${stt}"] .import-price-input`);
+            if (priceInput) priceInput.value = product.importPrice;
+        }
+    }
+    calculateImportTotal();
+}
+
+// Hàm chung thu thập dữ liệu từ Form Modal (CẦN THÊM VÀO PHẦN LOGIC IMPORT)
+function collectImportFormData() {
+    const date = document.getElementById('ImportDate').value;
+    const itemRows = document.getElementById('ImportItemsContainer').querySelectorAll('.import-item-row');
+    
+    let totalAmount = 0;
+    const items = [];
+    let isValid = true;
+
+    itemRows.forEach(row => {
+        // Lấy dữ liệu từ các trường trong dòng
+        const stt = parseInt(row.querySelector('.import-product-select').value);
+        const price = parseInt(row.querySelector('.import-price-input').value);
+        const quantity = parseInt(row.querySelector('.import-quantity-input').value);
+
+        if (!stt || isNaN(price) || price <= 0 || isNaN(quantity) || quantity <= 0) {
+            isValid = false;
+        }
+        
+        const product = productList.find(p => p.stt === stt);
+        if (product) {
+            totalAmount += price * quantity;
+            items.push({
+                productId: stt,
+                name: product.name,
+                importPrice: price,
+                quantity: quantity
+            });
+        }
+    });
+
+    return {
+        isValid: isValid,
+        date: date,
+        totalAmount: totalAmount,
+        items: items
+    };
+}
+
+// Hàm lưu phiếu nhập (hoàn thành hoặc lưu nháp)
+// Hàm lưu phiếu nhập (hoàn thành hoặc lưu nháp)
+function saveImport(isComplete) {
+    // 1. Thu thập dữ liệu chi tiết
+    const formData = collectImportFormData(); // Dùng hàm tách biệt
+    
+    if (!formData.isValid) {
+        alert("Lỗi: Vui lòng chọn sản phẩm và nhập Giá nhập/Số lượng hợp lệ (> 0) cho tất cả các dòng.");
+        return;
+    }
+    
+    // ... [Phần còn lại của logic (Tạo ID, Cập nhật tồn kho, Lưu, Cập nhật giao diện)] ...
+    
+    // 2. Tạo ID mới và đối tượng phiếu nhập
+    const newId = 'PN' + String(importList.length + 1).padStart(3, '0');
+    const newImport = {
+        id: newId,
+        date: formData.date, // Dùng dữ liệu từ formData
+        totalAmount: formData.totalAmount, // Dùng dữ liệu từ formData
+        status: isComplete ? 1 : 0,
+        items: formData.items // Dùng dữ liệu từ formData
+    };
+    
+    // ... [Logic Tồn kho (Dùng newImport.items thay vì items (biến cục bộ))] ...
+    if (isComplete) {
+        newImport.items.forEach(item => { // SỬ DỤNG newImport.items
+            const productIndex = productList.findIndex(p => p.stt === item.productId);
+            if (productIndex !== -1) {
+                productList[productIndex].stock += item.quantity;
+                productList[productIndex].importPrice = item.importPrice; 
+            }
+        });
+    }
+
+    // 4. LƯU & CẬP NHẬT GIAO DIỆN
+    importList.push(newImport);
+    showImportList();
+    showProduct(); 
+    closeModal('ImportModal');
+    alert(`Phiếu Nhập ${newId} đã được ${isComplete ? 'HOÀN THÀNH & nhập kho' : 'LƯU NHÁP'}!`);
+}
+
+// Hàm xử lý Cập nhật Phiếu Nhập đã tồn tại
+function updateImport(id, isComplete) {
+    // 1. Thu thập dữ liệu mới từ form
+    const formItems = collectImportFormData(); // Sử dụng hàm chung để thu thập form data
+    
+    if (!formItems.isValid) {
+        alert("Lỗi: Vui lòng chọn sản phẩm và nhập Giá nhập/Số lượng hợp lệ (> 0) cho tất cả các dòng.");
+        return;
+    }
+    
+    const phieuIndex = importList.findIndex(p => p.id === id);
+    if (phieuIndex === -1) {
+        alert("Lỗi: Không tìm thấy phiếu nhập cần sửa.");
+        return;
+    }
+    
+    const oldPhieu = importList[phieuIndex];
+
+    // 2. Hoàn tác tồn kho cũ nếu phiếu đã được hoàn thành trước đó (Quan trọng cho tính chính xác)
+    // Nếu phiếu cũ là 'Hoàn thành' (1), ta trừ đi lượng cũ trước khi áp dụng lượng mới
+    if (oldPhieu.status === 1) {
+        oldPhieu.items.forEach(item => {
+            const productIndex = productList.findIndex(p => p.stt === item.productId);
+            if (productIndex !== -1) {
+                productList[productIndex].stock -= item.quantity; 
+            }
+        });
+    }
+    
+    // 3. Tạo đối tượng phiếu nhập MỚI
+    const updatedImport = {
+        id: id,
+        date: formItems.date,
+        totalAmount: formItems.totalAmount,
+        status: isComplete ? 1 : 0,
+        items: formItems.items
+    };
+    
+    // 4. Áp dụng tồn kho mới nếu HOÀN THÀNH
+    if (isComplete) {
+        updatedImport.items.forEach(item => {
+            const productIndex = productList.findIndex(p => p.stt === item.productId);
+            if (productIndex !== -1) {
+                productList[productIndex].stock += item.quantity; // Tăng tồn kho mới
+                productList[productIndex].importPrice = item.importPrice; // Cập nhật giá vốn
+            }
+        });
+    }
+    
+    // 5. THAY THẾ PHIẾU CŨ
+    importList[phieuIndex] = updatedImport;
+
+    // 6. CẬP NHẬT GIAO DIỆN
+    showImportList();
+    showProduct(); 
+    closeModal('ImportModal');
+    alert(`Phiếu Nhập ${id} đã được ${isComplete ? 'HOÀN THÀNH & nhập kho' : 'LƯU NHÁP'}!`);
+}
+
+// Hàm hiển thị danh sách phiếu nhập
+function showImportList() {
+    const tableBody = document.getElementById('show-import-list');
+    const searchInput = document.getElementById('form-search-import') ? document.getElementById('form-search-import').value.toLowerCase() : '';
+    const statusSelect = document.getElementById('tinh-trang-import') ? parseInt(document.getElementById('tinh-trang-import').value) : 2;
+    
+    let filteredImports = importList.filter(phiu => {
+        const searchMatch = phiu.id.toLowerCase().includes(searchInput);
+        const statusMatch = statusSelect === 2 || phiu.status === statusSelect; 
+        return searchMatch && statusMatch;
+    });
+
+    let html = '';
+    filteredImports.forEach(phiu => {
+        const statusText = phiu.status === 1 ? 'Hoàn thành' : 'Nháp';
+        const statusClass = phiu.status === 1 ? 'status-complete' : 'status-no-complete';
+        const isEditable = phiu.status === 0;
+
+        html += `
+            <tr>
+                <td>${phiu.id}</td>
+                <td>${phiu.date}</td>
+                <td>${formatCurrency(phiu.totalAmount)}</td>
+                <td><span class="${statusClass}">${statusText}</span></td>
+                <td>
+                    <button class="btn-action" onclick="openEditImportModal('${phiu.id}')">Chi tiết</button>
+                    ${isEditable ? 
+                        `<button class="btn-detail" onclick="completeImport('${phiu.id}')">Hoàn thành</button>` : 
+                        `<button class="btn-detail" disabled>Đã xong</button>`}
+                </td>
+            </tr>
+        `;
+    });
+    tableBody.innerHTML = html;
+}
+
+// --- LOGIC THAO TÁC MODAL NHẬP HÀNG ---
+
+function openAddImportModal() {
+    const modal = document.getElementById('ImportModal');
+    const title = document.getElementById('ImportModalTitle');
+    const form = document.getElementById('ImportForm');
+    const itemsContainer = document.getElementById('ImportItemsContainer');
+
+    title.textContent = 'Thêm Phiếu Nhập Mới';
+    form.reset();
+    document.getElementById('ImportID').value = '';
+    
+    // 1. Xóa các dòng sản phẩm cũ
+    itemsContainer.innerHTML = '';
+    
+    // 2. Thêm một dòng sản phẩm mặc định
+    addImportItemRow();
+    
+    // 3. Gán hàm xử lý submit cho form (Lưu nháp)
+    form.onsubmit = function(event) {
+        event.preventDefault();
+        saveImport(false); // Lưu nháp (status: 0)
+    };
+    
+    // 4. Gán hàm xử lý hoàn thành
+    document.getElementById('ButtonCompleteImport').onclick = function() {
+        if (form.checkValidity()) {
+            saveImport(true); // Hoàn thành (status: 1)
+        } else {
+            form.reportValidity(); // Hiển thị lỗi HTML5 nếu form chưa hợp lệ
+        }
+    };
+    modal.style.display = 'block';
+}
+
+function openEditImportModal(id) {
+    const phieu = importList.find(p => p.id === id);
+    if (!phieu) return alert(`Lỗi: Không tìm thấy Phiếu Nhập ${id}.`);
+    
+    const modal = document.getElementById('ImportModal');
+    const title = document.getElementById('ImportModalTitle');
+    const form = document.getElementById('ImportForm');
+    const itemsContainer = document.getElementById('ImportItemsContainer');
+    const isEditable = phieu.status === 0; // Chỉ được sửa khi là Nháp (0)
+
+    // 1. Cài đặt Tiêu đề
+    title.textContent = `Chi tiết Phiếu Nhập #${phieu.id} (${isEditable ? 'Nháp' : 'Hoàn thành'})`;
+    
+    // 2. Đổ dữ liệu cơ bản
+    document.getElementById('ImportID').value = phieu.id;
+    document.getElementById('ImportDate').value = phieu.date;
+    document.getElementById('ImportItemsContainer').innerHTML = ''; // Xóa nội dung cũ
+
+    // 3. Đổ dữ liệu các dòng sản phẩm
+    phieu.items.forEach(item => {
+        addImportItemRow(item); // Hàm addImportItemRow đã được thiết kế để nhận item
+    });
+    calculateImportTotal();
+
+    // 4. Quản lý Khả năng chỉnh sửa và Nút bấm
+    const saveButton = document.getElementById('ButtonSubmitImportForm');
+    const completeButton = document.getElementById('ButtonCompleteImport');
+    const addButton = document.querySelector('#ImportModal .btn-action');
+
+    const allInputs = itemsContainer.querySelectorAll('input, select');
+    
+    if (isEditable) {
+        // CHO PHÉP CHỈNH SỬA VÀ LƯU
+        document.getElementById('ImportDate').disabled = false;
+        allInputs.forEach(el => el.disabled = false);
+        
+        saveButton.style.display = 'block';
+        completeButton.style.display = 'block';
+        addButton.style.display = 'block';
+
+        // THIẾT LẬP LOGIC SỬA
+        form.onsubmit = function(event) {
+            event.preventDefault();
+            updateImport(id, false); // SỬ DỤNG HÀM MỚI: Lưu Nháp (status: 0)
+        }
+        completeButton.onclick = function() {
+            updateImport(id, true); // SỬ DỤNG HÀM MỚI: Hoàn thành (status: 1)
+        };
+    } else {
+        // CHẾ ĐỘ CHỈ XEM (Khóa tất cả)
+        document.getElementById('ImportDate').disabled = true;
+        allInputs.forEach(el => el.disabled = true);
+        saveButton.style.display = 'none';
+        completeButton.style.display = 'none';
+        addButton.style.display = 'none';
+        
+        // Khóa luôn nút xóa hàng
+        document.querySelectorAll('.import-item-row .btn-delete').forEach(btn => btn.style.display = 'none');
+    }
+    
+    modal.style.display = 'block';
+}
+
+function completeImport(id) {
+    const phieuIndex = importList.findIndex(p => p.id === id);
+    if (phieuIndex === -1 || importList[phieuIndex].status === 1) return;
+
+    const phieu = importList[phieuIndex];
+
+    if (confirm(`Xác nhận HOÀN THÀNH phiếu nhập ${id}? Tồn kho sẽ được cập nhật.`)) {
+        // 1. CẬP NHẬT TỒN KHO
+        phieu.items.forEach(item => {
+            const productIndex = productList.findIndex(p => p.stt === item.productId);
+            if (productIndex !== -1) {
+                productList[productIndex].stock += item.quantity;
+                productList[productIndex].importPrice = item.importPrice; // Cập nhật giá vốn mới
+            }
+        });
+
+        // 2. CẬP NHẬT TRẠNG THÁI PHIẾU NHẬP
+        importList[phieuIndex].status = 1;
+
+        // 3. CẬP NHẬT GIAO DIỆN
+        showImportList();
+        showProduct();
+        alert(`Phiếu nhập ${id} đã HOÀN THÀNH và TỒN KHO đã được cập nhật!`);
+    }
+}
 
     // --- LOGIC CHÍNH: KHỞI TẠO & CHUYỂN ĐỔI MENU ---
 
@@ -1181,6 +1825,8 @@ function toggleOrderStatus(id, currentStatus) {
             if (targetSectionId === 'user') showUser();
             if (targetSectionId === 'order') findOrder();
             if (targetSectionId === 'statistical') thongke();
+            if (targetSectionId === 'price-mgt') showPriceManagement();
+            if (targetSectionId === 'import-mgt') showImportList();
         });
     });
 
@@ -1206,33 +1852,6 @@ function toggleOrderStatus(id, currentStatus) {
 // Trong hàm showConfirmStatusModal, bạn cần gán logic xử lý nút xác nhận
 // Bạn đã gọi hàm showConfirmStatusModal(id, currentStatus) nhưng thiếu logic 
 // gán sự kiện cho nút Xác nhận bên trong nó.
-
-function showConfirmStatusModal(id, currentStatus) {
-    // ... [GIỮ NGUYÊN CODE TRƯỚC ĐÓ CỦA showConfirmStatusModal] ...
-
-    // Thêm logic gán sự kiện cho nút Xác nhận
-    const confirmButton = document.getElementById('ConfirmActionButton');
-    confirmButton.onclick = function() {
-        toggleOrderStatus(id, currentStatus); // GỌI HÀM CẬP NHẬT TRẠNG THÁI
-    };
-
-    modal.style.display = 'block';
-}
-
-function toggleOrderStatus(id, currentStatus) {
-    // 1. Đóng modal xác nhận
-    closeModal('ConfirmOrderStatusModal');
-
-    // 2. Tìm và cập nhật trạng thái đơn hàng
-    const orderIndex = orderList.findIndex(o => o.id === id);
-    if (orderIndex !== -1) {
-        // Chuyển đổi trạng thái (0 -> 1 hoặc 1 -> 0)
-        orderList[orderIndex].status = 1 - currentStatus;
-
-        // 3. Làm mới giao diện
-        findOrder(); 
-        thongke(); // Cần cập nhật lại thống kê
-    }
-}
+    
     </script>
 </html>
