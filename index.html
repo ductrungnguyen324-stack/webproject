@@ -179,9 +179,11 @@
                     </div>
                     <div class="admin-control center">
                         <select name="tinh-trang" id="tinh-trang-order" onchange="findOrder()"> 
-                            <option value="2">Tất cả</option>
-                            <option value="1">Đã xử lý</option>
-                            <option value="0">Chưa xử lý</option>
+                            <option value="9">Tất cả</option>
+                            <option value="3">Giao hàng</option>
+                            <option value="2">Đã xử lý</option>
+                            <option value="1">Mới đặt</option>
+                            <option value="0">Đã hủy</option>
                         </select>
                     </div>
                     <div class="admin-control right">
@@ -502,28 +504,17 @@
                 <div class = "Order_Summary">
                     <p class = "total-line"><strong>Tổng Thanh Toán:</strong> <span id = "summaryTotal"></span></p>
                 </div>
+
+                <div class="modal-choice" style="margin-top: 30px; display: flex; justify-content: center;">
+                    <button type="button" id="ConfirmActionButton" class="confirm-button">
+                        <span id="StatusActionOrderText" style="font-weight: bold;">[HÀNH ĐỘNG]</span>
+                    </button>
+                    <button type="button" class="cancel-button" style="background-color: #d9534f;" onclick="closeModal('DetailOrder')">Hủy đơn</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="ConfirmOrderStatusModal" class="modal modal-confirm">
-        <div class="modal_content">
-            <span class="close_button" onclick="closeModal('ConfirmOrderStatusModal')">&times;</span>
-            
-            <h3 id="ConfirmStatusModalTitle">Xác nhận thao tác?</h3>
-            
-            <p style="text-align: center; margin: 20px 0;">
-                Bạn có chắc chắn muốn <span id="StatusActionOrderText" style="font-weight: bold;">[HÀNH ĐỘNG]</span> đơn hàng <br>
-                <strong id="OrderToChangeStatus" style="color: var(--dark-gray);">#DH000</strong> của khách hàng <strong id="CustomerToChangeStatus">Tên Khách Hàng</strong>?
-            </p>
-            
-            <div class="modal-choice" style="margin-top: 30px; display: flex; justify-content: center;">
-                <button type="button" id="ConfirmActionButton" class="confirm-button">Xác Nhận</button>
-                
-                <button type="button" class="cancel-button" onclick="closeModal('ConfirmOrderStatusModal')">Hủy</button>
-            </div>
-        </div>
-    </div>
     <div id="ImportModal" class="modal add-import">
         <div class="modal_content" style="max-width: 700px;">
             <span class="close_button" onclick="closeModal('ImportModal')">&times;</span>
@@ -580,11 +571,11 @@
 
     // 3. Dữ liệu Đơn hàng
     const orderList = [
-        { id: 'DH001', customer: 'Nguyễn Văn A', date: '2024-06-10', total: 4500000, status: 1 },
-        { id: 'DH002', customer: 'Trần Thị B', date: '2024-06-15', total: 6400000, status: 1 },
-        { id: 'DH003', customer: 'Lê Văn C', date: '2024-06-20', total: 990000, status: 0 }, 
-        { id: 'DH004', customer: 'Phạm Thị D', date: '2024-07-01', total: 7400000, status: 1 }, // Đã chỉnh tổng tiền
-        { id: 'DH005', customer: 'Hoàng Văn E', date: '2024-07-10', total: 1850000, status: 0 }, 
+        { id: 'DH001', customer: 'Nguyễn Văn A', date: '2024-06-10', total: 4500000, status: 1, phone: '0901234567', address: '123 Nguyễn Văn Cừ, Q1, TP.HCM', email: 'nguyenvana@gmail.com' },
+        { id: 'DH002', customer: 'Trần Thị B', date: '2024-06-15', total: 6400000, status: 1, phone: '0902345678', address: '456 Lê Lợi, Q3, TP.HCM', email: 'tranthib@gmail.com' },
+        { id: 'DH003', customer: 'Lê Văn C', date: '2024-06-20', total: 990000, status: 0, phone: '0903456789', address: '789 Trần Hưng Đạo, Q5, TP.HCM', email: 'levanc@gmail.com' }, 
+        { id: 'DH004', customer: 'Phạm Thị D', date: '2024-07-01', total: 7400000, status: 1, phone: '0904567890', address: '101 Phan Văn Trị, Q Gò Vấp, TP.HCM', email: 'phamthid@gmail.com' }, 
+        { id: 'DH005', customer: 'Hoàng Văn E', date: '2024-07-10', total: 1850000, status: 0, phone: '0905678901', address: '202 Võ Văn Tần, Q3, TP.HCM', email: 'hoangvane@gmail.com' }, 
     ];
 
     // 4. Dữ liệu Chi tiết Đơn hàng (dùng cho Thống kê)
@@ -657,7 +648,7 @@
         let html = '';
         filteredProducts.forEach((product, index) => {
             const statusText = product.status === 1 ? 'Kinh doanh' : 'Đã xóa';
-            const statusClass = product.status === 1 ? 'status-complete' : 'status-no-complete';
+            const statusClass = product.status === 1 ? 'status-completed' : 'status-canceled';
 
             html += `
                 <tr>
@@ -862,7 +853,7 @@ function openEditProductModal(id) {
         let html = '';
         filteredUsers.forEach((user, index) => {
             const statusText = user.status === 1 ? 'Hoạt động' : 'Bị khóa';
-            const statusClass = user.status === 1 ? 'status-complete' : 'status-no-complete';
+            const statusClass = user.status === 1 ? 'status-completed' : 'status-canceled';
             const actionButtonText = user.status === 1 ? 'Khóa' : 'Mở khóa';
             const actionButtonClass = user.status === 1 ? 'btn-delete' : 'btn-action';
 
@@ -1018,7 +1009,7 @@ function viewUserDetail(id) {
 
         let filteredOrders = orderList.filter(order => {
             const searchMatch = order.id.toLowerCase().includes(searchInput) || order.customer.toLowerCase().includes(searchInput);
-            const statusMatch = statusSelect === 2 || order.status === statusSelect; 
+            const statusMatch = statusSelect === 9 || order.status === statusSelect; 
             const dateMatchStart = !timeStart || order.date >= timeStart;
             const dateMatchEnd = !timeEnd || order.date <= timeEnd;
 
@@ -1027,10 +1018,19 @@ function viewUserDetail(id) {
 
         let html = '';
         filteredOrders.forEach(order => {
-            const statusText = order.status === 1 ? 'Đã xử lý' : 'Chưa xử lý';
-            const statusClass = order.status === 1 ? 'status-complete' : 'status-no-complete';
-            const currentStatus = order.status; // Lấy trạng thái hiện tại (0 hoặc 1)
-            const buttonText = currentStatus === 1 ? 'Hủy' : 'Xử lý';
+            const statusText = 
+                order.status === 0 ? 'Đã hủy' : 
+                order.status === 1 ? 'Mới đặt' :
+                order.status === 2 ? 'Đã xử lý' :
+                order.status === 3 ? 'Đã giao' :
+                ''
+            const statusClass = 
+                order.status === 0 ? 'status-canceled' :
+                order.status === 1 ? 'status-just-ordered' : 
+                order.status === 2 ? 'status-completed' : 
+                order.status === 3 ? 'status-delivered' :
+                ''
+            const currentStatus = order.status; // Lấy trạng thái hiện tại
 
             html += `
                 <tr>
@@ -1040,8 +1040,7 @@ function viewUserDetail(id) {
                     <td>${formatCurrency(order.total)}</td>
                     <td><span class="${statusClass}">${statusText}</span></td>
                     <td>
-                        <button class="btn-detail" onclick="viewOrderDetail('${order.id}')">Chi tiết</button>
-                        <button onclick="showConfirmStatusModal('${order.id}', ${currentStatus})">${buttonText}</button>                   
+                        <button class="btn-detail" onclick="viewOrderDetail('${order.id}')">Chi tiết</button>                 
                     </td>
                 </tr>
             `;
@@ -1109,7 +1108,14 @@ function viewOrderDetail(id) {
 
     // 1. Lấy Modal
     const modal = document.getElementById('DetailOrder');
-    if (!modal) return;
+    const productsTableBody = document.getElementById('ProductsTableBody');
+    const summaryTotal = document.getElementById('summaryTotal');
+    const modalChoice = modal.querySelector('.modal-choice');
+    const actionButton = modal.querySelector('#ConfirmActionButton');
+    const cancelButton = modal.querySelector('.cancel-button');
+    const statusActionOrderText = document.getElementById('StatusActionOrderText');
+    
+    if (!modal || !modalChoice || !actionButton || !cancelButton) return;
 
     // Lấy Chi tiết các mặt hàng của đơn hàng này
     const orderDetails = orderDetailsList.filter(detail => detail.orderId === id);
@@ -1145,10 +1151,18 @@ function viewOrderDetail(id) {
     document.getElementById('DetailModalTitle').textContent = `Chi Tiết Đơn Hàng #${order.id}`;
 
     // Thông tin Đơn hàng (Order_Info_Left)
-    const statusText = order.status === 1 ? '<span class="status-complete">Đã xử lý</span>' : '<span class="status-no-complete">Chưa xử lý</span>';
+    const statusInfo = {
+        0: { text: 'Đã hủy', class: 'status-canceled' },
+        1: { text: 'Mới đặt', class: 'status-just-ordered' },
+        2: { text: 'Đã xử lý', class: 'status-completed' },
+        3: { text: 'Đã giao', class: 'status-delivered' },
+    };
+      
+    const currentStatus = order.status;
+    const statusHtml = `<span class="${statusInfo[currentStatus].class}">${statusInfo[currentStatus].text}</span>`;
     
     document.getElementById('infoOrderDate').textContent = order.date;
-    document.getElementById('infoStatus').innerHTML = statusText;
+    document.getElementById('infoStatus').innerHTML = statusHtml;
 
     // Thông tin Người nhận (Order_Info_Right)
     // *Lưu ý: Giả định dữ liệu orderList có các trường 'customer', 'phone', 'address'
@@ -1158,13 +1172,49 @@ function viewOrderDetail(id) {
     
     // 4. Cập nhật Bảng Sản phẩm và Tổng kết
     document.getElementById('ProductsTableBody').innerHTML = html;
-    
-    // Tổng Thanh Toán
     document.getElementById('summaryTotal').textContent = formatCurrency(calculatedTotal); 
 
-    // 5. Hiển thị Modal
+    // 5. Logic Hiển thị và Cập nhật nút Hành động
+    if (currentStatus === 1) { // Mới đặt -> Xử lý
+        statusActionOrderText.textContent = "Xử lý đơn";
+        actionButton.style.display = 'inline-block';
+        cancelButton.style.display = 'inline-block';
+        modalChoice.style.display = 'flex';
+        // Gắn sự kiện cho nút 'Xử lý đơn' (chuyển sang trạng thái 2: Đã xử lý)
+        actionButton.onclick = () => { changeOrderStatus(id, 2); }; 
+        // Gắn sự kiện cho nút 'Hủy đơn' (chuyển sang trạng thái 0: Đã hủy)
+        cancelButton.onclick = () => { changeOrderStatus(id, 0); }; 
+
+    } else if (currentStatus === 2) { // Đã xử lý -> Giao hàng
+        statusActionOrderText.textContent = "Giao hàng";
+        actionButton.style.display = 'inline-block';
+        cancelButton.style.display = 'inline-block';
+        modalChoice.style.display = 'flex';
+        // Gắn sự kiện cho nút 'Giao hàng' (chuyển sang trạng thái 3: Đã giao)
+        actionButton.onclick = () => { changeOrderStatus(id, 3); }; 
+        // Gắn sự kiện cho nút 'Hủy đơn' (chuyển sang trạng thái 0: Đã hủy)
+        cancelButton.onclick = () => { changeOrderStatus(id, 0); }; 
+        
+    } else { // Đã hủy (0) hoặc Đã giao (3)
+        modalChoice.style.display = 'none'; // Ẩn toàn bộ khu vực lựa chọn
+    }
+
+    // 6. Hiển thị Modal
     modal.style.display = 'block';
 }
+
+function changeOrderStatus(id, newStatus) {
+    const orderIndex = orderList.findIndex(o => o.id === id);
+    if (orderIndex !== -1) {
+        orderList[orderIndex].status = newStatus;
+
+        // Cập nhật giao diện
+        findOrder(); // Cập nhật bảng Đơn hàng
+        thongke(); // Cập nhật thống kê
+        closeModal('DetailOrder'); // Đóng modal Chi tiết
+    }
+}
+
 
 // 1. Chức năng XỬ LÝ/HỦY ĐƠN HÀNG (Toggle Status)
 function showConfirmStatusModal(id, currentStatus) {
